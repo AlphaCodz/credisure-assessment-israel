@@ -1,0 +1,194 @@
+[
+  {
+    "model": "users.user",
+    "pk": 1,
+    "fields": {
+      "username": "admin",
+      "password": "pbkdf2_sha256$870000$P83alfLPAQU9tjW5Hlo2G4$KJD2GS1HXWbBUohy/DMYVzkzPJfr0/Gz9LER/selUh8=",
+      "first_name": "Ada",
+      "last_name": "Obi",
+      "email": "admin@example.com",
+      "role": "admin",
+      "is_active": true,
+      "is_staff": true,
+      "is_superuser": true,
+      "date_joined": "2026-10-30T09:00:00Z"
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 2,
+    "fields": {
+      "username": "tmensah",
+      "password": "!",
+      "first_name": "Tunde",
+      "last_name": "Mensah",
+      "email": "tmensah@example.com",
+      "role": "manager",
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false,
+      "date_joined": "2026-10-24T09:00:00Z"
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 3,
+    "fields": {
+      "username": "nokafor",
+      "password": "!",
+      "first_name": "Ngozi",
+      "last_name": "Okafor",
+      "email": "nokafor@example.com",
+      "role": "analyst",
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false,
+      "date_joined": "2026-10-19T09:00:00Z"
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 4,
+    "fields": {
+      "username": "kadeyemi",
+      "password": "!",
+      "first_name": "Kemi",
+      "last_name": "Adeyemi",
+      "email": "kadeyemi@example.com",
+      "role": "analyst",
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false,
+      "date_joined": "2026-10-11T09:00:00Z"
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 5,
+    "fields": {
+      "username": "sbello",
+      "password": "!",
+      "first_name": "Sani",
+      "last_name": "Bello",
+      "email": "sbello@example.com",
+      "role": "manager",
+      "is_active": false,
+      "is_staff": false,
+      "is_superuser": false,
+      "date_joined": "2026-09-28T09:00:00Z"
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 6,
+    "fields": {
+      "username": "fnwosu",
+      "password": "!",
+      "first_name": "Funke",
+      "last_name": "Nwosu",
+      "email": "fnwosu@example.com",
+      "role": "analyst",
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false,
+      "date_joined": "2026-09-17T09:00:00Z"
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 7,
+    "fields": {
+      "username": "danyanwu",
+      "password": "!",
+      "first_name": "David",
+      "last_name": "Anyanwu",
+      "email": "danyanwu@example.com",
+      "role": "admin",
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false,
+      "date_joined": "2026-09-02T09:00:00Z"
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 8,
+    "fields": {
+      "username": "aeze",
+      "password": "!",
+      "first_name": "Amara",
+      "last_name": "Eze",
+      "email": "aeze@example.com",
+      "role": "analyst",
+      "is_active": false,
+      "is_staff": false,
+      "is_superuser": false,
+      "date_joined": "2026-08-21T09:00:00Z"
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 9,
+    "fields": {
+      "username": "ibalogun",
+      "password": "!",
+      "first_name": "Ife",
+      "last_name": "Balogun",
+      "email": "ibalogun@example.com",
+      "role": "manager",
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false,
+      "date_joined": "2026-08-09T09:00:00Z"
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 10,
+    "fields": {
+      "username": "cuche",
+      "password": "!",
+      "first_name": "Chidi",
+      "last_name": "Uche",
+      "email": "cuche@example.com",
+      "role": "analyst",
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false,
+      "date_joined": "2026-07-30T09:00:00Z"
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 11,
+    "fields": {
+      "username": "zlawal",
+      "password": "!",
+      "first_name": "Zainab",
+      "last_name": "Lawal",
+      "email": "zlawal@example.com",
+      "role": "analyst",
+      "is_active": false,
+      "is_staff": false,
+      "is_superuser": false,
+      "date_joined": "2026-07-14T09:00:00Z"
+    }
+  },
+  {
+    "model": "users.user",
+    "pk": 12,
+    "fields": {
+      "username": "oakin",
+      "password": "!",
+      "first_name": "Ola",
+      "last_name": "Akin",
+      "email": "oakin@example.com",
+      "role": "analyst",
+      "is_active": true,
+      "is_staff": false,
+      "is_superuser": false,
+      "date_joined": "2026-06-25T09:00:00Z"
+    }
+  }
+]

@@ -1,0 +1,53 @@
+# Production stack. For local development add docker-compose.dev.yml (see README).
+x-backend: &backend
+  build: ./backend
+  restart: unless-stopped
+  env_file:
+    - path: .env
+      required: false
+  environment: &backend-environment
+    DJANGO_DEBUG: "0"
+    REDIS_URL: redis://redis:6379
+    SQLITE_PATH: /data/db.sqlite3
+  volumes:
+    - db_data:/data
+  depends_on:
+    redis:
+      condition: service_healthy
+
+services:
+  redis:
+    image: redis:7-alpine
+    # volatile-lru only evicts keys with a TTL, so queued Celery tasks are never dropped.
+    command: redis-server --maxmemory 64mb --maxmemory-policy volatile-lru --save "" --appendonly no
+    restart: unless-stopped
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  web:
+    <<: *backend
+    command: sh -c "python manage.py migrate --noinput && gunicorn config.wsgi --bind 0.0.0.0:8000 --workers 2"
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    networks:
+      - default
+      - internal
+
+  celery:
+    <<: *backend
+    command: celery -A config worker --loglevel=info --concurrency=1
+    networks:
+      - internal
+
+volumes:
+  db_data:
+
+networks:
+  # No route to the host or the internet: only web and celery can reach Redis.
+  internal:
+    internal: true
