@@ -105,6 +105,12 @@ DATABASES = {
     }
 }
 
+# Use a hosted database (e.g. Postgres) when DATABASE_URL is set, as on Vercel.
+if os.environ.get('DATABASE_URL'):
+    import dj_database_url
+
+    DATABASES['default'] = dj_database_url.config()
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
