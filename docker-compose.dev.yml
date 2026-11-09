@@ -1,11 +1,10 @@
-# Local development: debug mode, code reload and the local db.sqlite3.
+# Local development: debug mode, code reload (database from DATABASE_URL in .env).
 services:
   web:
     user: root
     command: sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     environment:
       DJANGO_DEBUG: "1"
-      SQLITE_PATH: /app/db.sqlite3
     volumes: !override
       - ./backend:/app
 
@@ -13,6 +12,5 @@ services:
     user: root
     environment:
       DJANGO_DEBUG: "1"
-      SQLITE_PATH: /app/db.sqlite3
     volumes: !override
       - ./backend:/app

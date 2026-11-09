@@ -71,7 +71,6 @@ The API must sit behind an HTTPS proxy or platform load balancer that sets `X-Fo
    docker compose exec web python manage.py createsuperuser
    ```
 
-SQLite data lives in the `db_data` Docker volume, so this setup runs on a single server. Back up that volume.
 
 ### Vercel
 

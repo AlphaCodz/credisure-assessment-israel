@@ -98,18 +98,10 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.environ.get('SQLITE_PATH', BASE_DIR / 'db.sqlite3'),
-    }
-}
+import dj_database_url
 
-# Use a hosted database (e.g. Postgres) when DATABASE_URL is set, as on Vercel.
-if os.environ.get('DATABASE_URL'):
-    import dj_database_url
-
-    DATABASES['default'] = dj_database_url.config()
+# DATABASE_URL is required. Without it, startup fails with a clear KeyError.
+DATABASES = {'default': dj_database_url.parse(os.environ['DATABASE_URL'])}
 
 
 # Password validation

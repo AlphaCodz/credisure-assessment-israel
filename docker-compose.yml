@@ -8,9 +8,6 @@ x-backend: &backend
   environment: &backend-environment
     DJANGO_DEBUG: "0"
     REDIS_URL: redis://redis:6379
-    SQLITE_PATH: /data/db.sqlite3
-  volumes:
-    - db_data:/data
   depends_on:
     redis:
       condition: service_healthy
@@ -43,9 +40,6 @@ services:
     command: celery -A config worker --loglevel=info --concurrency=1
     networks:
       - internal
-
-volumes:
-  db_data:
 
 networks:
   # No route to the host or the internet: only web and celery can reach Redis.
