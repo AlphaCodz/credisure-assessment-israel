@@ -1,4 +1,5 @@
 from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied, ValidationError
 
@@ -17,6 +18,26 @@ class UserSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["is_active", "date_joined"]
 
+    PASSWORD_RULES = [
+        (str.isupper, "an uppercase letter"),
+        (str.islower, "a lowercase letter"),
+        (str.isdigit, "a number"),
+        (lambda c: not c.isalnum() and not c.isspace(), "a symbol, such as ! or #"),
+    ]
+
+    def check_password_format(self, password, instance):
+        errors = [
+            f"Password must contain {label}."
+            for rule, label in self.PASSWORD_RULES
+            if not any(rule(c) for c in password)
+        ]
+        try:
+            validate_password(password, user=instance)  # length, common, numeric, similarity
+        except DjangoValidationError as exc:
+            errors += exc.messages
+        if errors:
+            raise ValidationError({"password": errors})
+
     def validate(self, attrs):
         actor = self.context["request"].user
         instance = self.instance
@@ -26,7 +47,7 @@ class UserSerializer(serializers.ModelSerializer):
         if instance is None and not attrs.get("password"):
             raise ValidationError({"password": "A password is required for new users."})
         if attrs.get("password"):
-            validate_password(attrs["password"], user=instance)
+            self.check_password_format(attrs["password"], instance)
 
         if User.Role.ADMIN in (current_role, new_role) and not actor.has_app_permission(AppPermission.MANAGE_ADMINS):
             raise PermissionDenied("You do not have permission to manage admin accounts.")

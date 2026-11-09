@@ -6,6 +6,7 @@ import sys
 
 def main():
     """Run administrative tasks."""
+    os.environ.setdefault('DJANGO_DEBUG', '1')  # local commands run in debug; servers set it themselves
     # Load the repo's .env (e.g. DATABASE_URL) for local commands. Real env vars win.
     env_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '.env')
     if os.path.exists(env_file):
@@ -16,7 +17,6 @@ def main():
                     key, value = line.split('=', 1)
                     os.environ.setdefault(key.strip(), value.strip().strip('"\''))
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
-    os.environ.setdefault('DJANGO_DEBUG', '1')  # production sets DJANGO_DEBUG=0
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

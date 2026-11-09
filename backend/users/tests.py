@@ -106,6 +106,15 @@ class PermissionTests(TestCase):
         self.assertEqual(response.status_code, 201)
         self.assertTrue(User.objects.filter(username="newbie").exists())
 
+    def test_password_format_is_enforced(self):
+        response = self.client_for(self.admin).post(
+            "/api/users/", self.new_user_payload(password="weakpassword"), format="json"
+        )
+        self.assertEqual(response.status_code, 400)
+        errors = " ".join(response.data["password"])
+        for part in ("uppercase", "number", "symbol"):
+            self.assertIn(part, errors)
+
     def test_manager_and_analyst_cannot_create_users(self):
         for user in (self.manager, self.analyst):
             response = self.client_for(user).post("/api/users/", self.new_user_payload(username=f"x{user.pk}"), format="json")

@@ -136,6 +136,9 @@ export default function UserModal({ user, onClose, onSaved }) {
             onChange={set("password")}
             className={inputClass}
           />
+          <span className="mt-1 block text-xs font-normal text-gray-500">
+            At least 8 characters, with an uppercase letter, a lowercase letter, a number and a symbol.
+          </span>
           <FieldError message={errors.password} />
         </label>
 
