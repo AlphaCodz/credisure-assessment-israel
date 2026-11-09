@@ -3,7 +3,10 @@
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+// The API is served from the same origin under /api (Vercel routes /api/* to the Django service).
+// Set NEXT_PUBLIC_API_URL only when the API lives elsewhere, e.g. http://localhost:8000/api
+// when running `next dev` on its own instead of `vercel dev`.
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "/api";
 
 const ApiContext = createContext(null);
 

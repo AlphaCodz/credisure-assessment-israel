@@ -33,6 +33,16 @@ npm install
 npm run dev
 ```
 
+The frontend calls the API at `/api` on its own origin. When running `npm run dev` on its own, point it at Django by creating `frontend/.env.local` with:
+
+```
+NEXT_PUBLIC_API_URL=http://localhost:8000/api
+```
+
+### Both together with Vercel
+
+`vercel dev` from the repository root runs both services behind one origin, using the routing in `vercel.json` (`/api/*` goes to Django, everything else goes to Next.js). No `NEXT_PUBLIC_API_URL` is needed.
+
 Sign in with `admin` / `admin12345`. These are demo accounts: never load the `users` fixture in production.
 
 ### Tests
@@ -63,7 +73,11 @@ The API must sit behind an HTTPS proxy or platform load balancer that sets `X-Fo
 
 SQLite data lives in the `db_data` Docker volume, so this setup runs on a single server. Back up that volume.
 
-### Frontend
+### Vercel
+
+`vercel.json` deploys both apps as one Vercel project with two services. `/api/*` is routed to the Django service (it receives the full `/api/...` path), and everything else goes to Next.js. Because both share one domain, CORS and `NEXT_PUBLIC_API_URL` are not needed. Django adds Vercel's deployment, branch and production domains to `ALLOWED_HOSTS` and `CSRF_TRUSTED_ORIGINS` automatically. Set `DJANGO_SECRET_KEY` in the project's environment variables, and add any custom domain to `DJANGO_ALLOWED_HOSTS`.
+
+### Frontend on a separate host
 
 Deploy `frontend` to any Next.js host. Set this before building, because it is compiled into the app:
 

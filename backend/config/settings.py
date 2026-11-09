@@ -35,6 +35,18 @@ else:
 
 ALLOWED_HOSTS = env_list('DJANGO_ALLOWED_HOSTS')
 
+# On Vercel, also accept the deployment, branch and production domains Vercel sets at runtime.
+VERCEL_HOSTS = [
+    host
+    for host in (
+        os.environ.get('VERCEL_URL'),
+        os.environ.get('VERCEL_BRANCH_URL'),
+        os.environ.get('VERCEL_PROJECT_PRODUCTION_URL'),
+    )
+    if host
+]
+ALLOWED_HOSTS += VERCEL_HOSTS
+
 
 # Application definition
 
@@ -156,7 +168,7 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    CSRF_TRUSTED_ORIGINS = env_list('CSRF_TRUSTED_ORIGINS')
+    CSRF_TRUSTED_ORIGINS = env_list('CSRF_TRUSTED_ORIGINS') + [f'https://{host}' for host in VERCEL_HOSTS]
 
 # Docker sets REDIS_URL. Without it, Django uses an in-memory cache and runs Celery tasks inline.
 REDIS_URL = os.environ.get('REDIS_URL')

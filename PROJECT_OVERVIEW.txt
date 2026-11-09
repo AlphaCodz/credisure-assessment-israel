@@ -1,0 +1,87 @@
+Admin Dashboard: Project Overview
+
+SUMMARY
+
+I built a user management dashboard with a Django REST Framework API and a Next.js frontend styled with Tailwind CSS. It covers everything in the brief: a login screen, a dashboard overview, a user table, search and filtering, an API request status indicator, and responsive navigation.
+
+I then extended it with role-based permissions, user management actions, pagination, Redis caching with Celery, and a production Docker setup.
+
+
+HOW IT IS STRUCTURED
+
+The backend is a single Django app called users. It follows the Models, Views, Templates structure, with no service or utils files. Models hold the data, views hold the API logic, and Next.js takes the place of the Templates layer. I used Django REST Framework's APIView and generic views because they are simple and keep each endpoint easy to read.
+
+Serializers are the one standard addition, because Django REST Framework needs them to validate and format data. Two Celery files are also required: config/celery.py sets Celery up, and users/tasks.py holds the background task and caching logic, because the views and the Celery worker both use it.
+
+The frontend uses plain JavaScript. All API calls go through one component, ApiProvider, so authentication, error handling and the status indicator are handled in one place.
+
+
+WHAT IT DOES
+
+Login
+Users sign in with a username and password and receive a token, which is sent with every later request. Dashboard pages redirect to the login screen when no token is present. I used token authentication because the frontend and backend run separately, and tokens work well across that split. Login is limited to 10 attempts a minute to slow down password guessing.
+
+Dashboard overview
+The overview shows total, active, inactive and admin user counts, plus the five most recently joined users.
+
+User table, search and filter
+The table can be searched by name, username or email, and filtered by role and status. Search and filtering run on the server rather than in the browser, so they work on all users and not just the ones on screen. Search waits briefly until the user stops typing, which avoids sending a request on every keystroke. Late responses from older searches are ignored, so the table cannot show out-of-date results.
+
+Pagination
+The user list shows 10 users per page. Filters are applied before paging, and changing a search or filter returns to page 1.
+
+API request status indicator
+A small badge shows the state of the latest request, such as loading, 200 OK with the response time, an error code, or API offline. It reports real requests rather than a separate health check, so it shows what the user is actually experiencing.
+
+Responsive navigation
+Desktop screens show a top navigation bar, and smaller screens show a hamburger menu.
+
+
+ROLES AND PERMISSIONS
+
+There are three roles: Admin, Manager and Analyst. There are six permissions: create users, edit user details, ban and unban users, change roles, manage admin accounts, and change role permissions.
+
+Permissions are stored in a database table rather than hardcoded, so an admin can change what each role can do from the Permissions page without a code change. Admins have every permission by default, and other roles start with none.
+
+The server enforces every permission. The frontend also hides buttons a user cannot use, but that is only for a cleaner experience, because a hidden button is not a security control.
+
+I added a few safeguards:
+- Users cannot ban themselves or change their own role.
+- Managing an admin account needs its own permission, so a role that can ban users cannot ban admins unless it has been given that permission.
+- The admin role cannot lose the permission to change permissions, which prevents everyone being locked out.
+- Banning has its own endpoint, so it cannot be done through a normal profile edit. A banned user cannot log in, and their existing token stops working.
+
+
+CACHING WITH REDIS AND CELERY
+
+The overview and the user list are cached in Redis for 60 seconds, which saves repeating the same database queries. Login and permission checks still run first, so a cached response never bypasses security.
+
+The risk with caching is showing old data, so any change to a user clears the cache immediately. A ban or edit therefore appears on the next page load. Celery then rebuilds the overview in the background, so the next visitor gets a fast response.
+
+Redis has no public port and runs on an internal Docker network, so only the API and the Celery worker can reach it. The Celery worker also has no internet access.
+
+Without Docker, the app falls back to an in-memory cache and runs tasks directly, which keeps local setup simple.
+
+
+DEPLOYMENT AND SECURITY
+
+- Secrets and domains are stored in environment variables, not in the code, and the app will not start in production without a secret key.
+- I upgraded to Django 5.2 LTS and the latest Django REST Framework after a dependency audit found known vulnerabilities in the older versions. The audit now reports none.
+- In production the API runs on gunicorn as a non-root user, redirects HTTP to HTTPS, rejects unknown hostnames, and shows no debug pages.
+- Only the frontend's own address is allowed to call the API from a browser.
+- Separate Docker Compose files keep production and local development settings apart.
+
+
+TESTING
+
+The backend has 19 automated tests covering permissions, pagination, caching and login limits. I also ran the main user flows in a real Chrome browser, including creating, editing and banning users, changing permissions, and confirming that a Manager sees only the actions allowed for that role.
+
+
+KNOWN LIMITATIONS
+
+- SQLite keeps the project simple but limits it to one server. Running on several servers would need a database such as PostgreSQL.
+- Login tokens do not expire, and logging out only removes the token from the browser.
+- The token is stored in the browser's local storage, which is simple but less protected than a secure cookie.
+- Users can be banned but not deleted. I chose this because banning keeps their records and can be reversed.
+- Any logged-in user can view the user list, including Analysts.
+- One backend test failed once across five full runs in Docker with Redis, and I could not reproduce it. The other four runs passed, and all tests pass without Docker.
